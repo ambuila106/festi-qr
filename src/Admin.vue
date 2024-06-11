@@ -1,41 +1,58 @@
 <template>
   <div>
     <h1>Administrador</h1>
-    <div v-for="colaborador in colaboradores" :key="colaborador.id">
-      <p>{{ colaborador.name }} - Capacidad: {{ colaborador.capacity }}</p>
+    <div v-for="(collaborator, key) in collaborators" :key="collaborator.cc">
+      <p>{{ collaborator.name }} - Capacidad: {{ collaborator.currentTickets }}</p>
       <input v-model.number="additionalCapacity" type="number" placeholder="Añadir capacidad">
-      <button @click="addCapacity(colaborador.id)">Añadir Capacidad</button>
+      <button @click="addCapacity(key)">Añadir Capacidad</button>
     </div>
   </div>
 </template>
 
 <script>
+import app from '@/firebase.js'
+import { getDatabase, ref, onValue, update } from "firebase/database";
+
 export default {
   name: "AdminQR",
   data() {
     return {
-      colaboradores: [],
-      additionalCapacity: 0
+      collaborators: [],
+      additionalCapacity: 0,
+      db: null
     };
   },
   mounted() {
-    this.fetchColaboradores();
+    this.db = getDatabase();
+
+    const collaboratorsRef = ref(this.db, 'collaborators/');
+
+    onValue(collaboratorsRef, (snapshot) => {
+      const data = snapshot.val()
+      console.log("data: ", data)
+      this.collaborators = data.reverse().filter(elemento => elemento)
+    })
+
+    console.log(this.db)
+    console.log(getDatabase(app))
   },
   methods: {
-    fetchColaboradores() {
-      this.$db.collection('colaboradores').get().then(snapshot => {
-        this.colaboradores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      });
-    },
-    addCapacity(id) {
-      const colaborador = this.colaboradores.find(c => c.id === id);
-      const newCapacity = colaborador.capacity + this.additionalCapacity;
+    addCapacity(key) {
+      const collaborator = this.collaborators[key];
+      if (collaborator) {
+        const newCapacity = collaborator.currentTickets + this.additionalCapacity;
 
-      this.$db.collection('colaboradores').doc(id).update({
-        capacity: newCapacity
-      });
-
-      this.fetchColaboradores();
+        const collaboratorRef = ref(this.db, `collaborators/${key}`);
+        update(collaboratorRef, { currentTickets: newCapacity })
+          .then(() => {
+            console.log("Capacidad actualizada exitosamente!");
+            this.$set(this.collaborators, key, { ...collaborator, currentTickets: newCapacity }); // Actualiza localmente también
+            this.additionalCapacity = 0; // Reinicia el campo de capacidad adicional
+          })
+          .catch((error) => {
+            console.error("Error al actualizar la capacidad: ", error);
+          });
+      }
     }
   }
 };

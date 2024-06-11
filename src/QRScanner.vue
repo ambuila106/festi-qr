@@ -23,6 +23,7 @@
       async onDetect(result) {
         const decodedResult = await result;
         console.log(decodedResult);
+        alert(decodedResult.content)
       },
     }
   };

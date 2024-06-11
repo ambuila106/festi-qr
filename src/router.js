@@ -10,9 +10,9 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
+      path: '/festi-qr',
       name: 'Home',
-      component: Generate
+      component: QRScanner
     },
     {
       path: '/admin',
@@ -22,7 +22,7 @@ export default new Router({
     {
       path: '/qr-scanner',
       name: 'QRScanner',
-      component: QRScanner
+      component: Generate
     }
   ]
 });

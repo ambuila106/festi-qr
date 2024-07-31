@@ -1,10 +1,22 @@
 <template>
-  <div>
+  <div class="admin">
     <h1>Administrador</h1>
+
+    <span>Autenticación</span>
+    <select id="collaborators" placeholder="Colaborador"  v-model="collaboratorSelected">
+        <option
+          v-for="collaborator in collaborators"
+          :key="collaborator.cc"
+          :value="collaborator"
+        >
+          {{ collaborator.name }}
+        </option>
+      </select>
+    <input v-model="password" type="password" placeholder="clave">
     <div v-for="(collaborator, key) in collaborators" :key="collaborator.cc">
       <p>{{ collaborator.name }} - Capacidad: {{ collaborator.currentTickets }}</p>
       <input v-model.number="additionalCapacity" type="number" placeholder="Añadir capacidad">
-      <button @click="addCapacity(key)">Añadir Capacidad</button>
+      <div class="generate-btn" @click="addCapacity(key)">Añadir Capacidad</div>
     </div>
   </div>
 </template>
@@ -57,3 +69,11 @@ export default {
   }
 };
 </script>
+
+<style>
+  .admin {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+</style>

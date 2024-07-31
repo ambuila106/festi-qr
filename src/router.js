@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Generate from './Generate.vue';
-import Admin from './Admin.vue';
-import QRScanner from './QRScanner.vue';
+import Generate from './views/Generate.vue';
+import Admin from './views/Admin.vue';
+import Home from './views/Home.vue';
 
 Vue.use(Router);
 
@@ -12,7 +12,7 @@ export default new Router({
     {
       path: '/festi-qr',
       name: 'Home',
-      component: QRScanner
+      component: Home
     },
     {
       path: '/admin',
